@@ -14,16 +14,9 @@ import config from 'config';
 import { showAlert } from 'actions/index';
 
 import Home from 'routes/Home';
-import Private from 'routes/Private';
 import NotFound from 'routes/NotFound';
 
-import Header from 'components/Header';
-import SystemAlerts from 'containers/SystemAlerts';
-
-import Footer from 'components/Footer';
 import GlobalStyles from 'components/GlobalStyles';
-import RoutePublic from 'components/RoutePublic';
-import RoutePrivate from 'components/RoutePrivate';
 
 const AppWrapper = styled.div`
   display: flex;
@@ -34,41 +27,16 @@ const AppWrapper = styled.div`
   transition: opacity 0.5s;
 `;
 
-const MainPrivate = ({ isAuthenticated }) =>
-  isAuthenticated &&
-  css`
-    padding: ${utils.px(headerHeight)} 0 0;
-  `;
-
 const Main = styled.main`
   min-height: 100vh;
-
-  ${MainPrivate};
 `;
 
 export class App extends React.Component {
-  static propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    user: PropTypes.object.isRequired,
-  };
-
-  componentWillReceiveProps(nextProps) {
-    const { dispatch } = this.props;
-    const { changedTo } = treeChanges(this.props, nextProps);
-
-    /* istanbul ignore else */
-    if (changedTo('user.isAuthenticated', true)) {
-      dispatch(showAlert('Hello! And welcome!', { variant: 'success', icon: 'bell' }));
-    }
-  }
-
   render() {
-    const { dispatch, user } = this.props;
-
     return (
       <Router history={history}>
         <ThemeProvider theme={theme}>
-          <AppWrapper logged={user.isAuthenticated}>
+          <AppWrapper>
             <Helmet
               defer={false}
               htmlAttributes={{ lang: 'pt-br' }}
@@ -77,25 +45,17 @@ export class App extends React.Component {
               titleTemplate={`%s | ${config.name}`}
               titleAttributes={{ itemprop: 'name', lang: 'pt-br' }}
             />
-            {user.isAuthenticated && <Header dispatch={dispatch} user={user} />}
-            <Main isAuthenticated={user.isAuthenticated}>
+            <Main>
               <Switch>
-                <RoutePublic
-                  isAuthenticated={user.isAuthenticated}
+              
+                <Route
                   path="/"
                   exact
                   component={Home}
                 />
-                <RoutePrivate
-                  isAuthenticated={user.isAuthenticated}
-                  path="/private"
-                  component={Private}
-                />
                 <Route component={NotFound} />
               </Switch>
             </Main>
-            <Footer />
-            <SystemAlerts />
             <GlobalStyles />
           </AppWrapper>
         </ThemeProvider>
@@ -104,11 +64,4 @@ export class App extends React.Component {
   }
 }
 
-/* istanbul ignore next */
-function mapStateToProps(state) {
-  return {
-    user: state.user,
-  };
-}
-
-export default connect(mapStateToProps)(App);
+export default App;

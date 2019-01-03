@@ -12,27 +12,16 @@ import keyMirror from 'fbjs/lib/keyMirror';
 export const ActionTypes = keyMirror({
   SWITCH_MENU: undefined,
   EXCEPTION: undefined,
-  USER_LOGIN: undefined,
-  USER_LOGIN_SUCCESS: undefined,
-  USER_LOGIN_FAILURE: undefined,
-  USER_LOGOUT: undefined,
-  USER_LOGOUT_SUCCESS: undefined,
-  USER_LOGOUT_FAILURE: undefined,
-  GITHUB_GET_REPOS: undefined,
-  GITHUB_GET_REPOS_SUCCESS: undefined,
-  GITHUB_GET_REPOS_FAILURE: undefined,
   SHOW_ALERT: undefined,
   HIDE_ALERT: undefined,
-});
 
-/**
- * @constant {Object} STATUS
- * @memberof Constants
- */
-export const STATUS = {
-  IDLE: 'idle',
-  RUNNING: 'running',
-  READY: 'ready',
-  SUCCESS: 'success',
-  ERROR: 'error',
-};
+  SELECT_STATION: undefined,
+  LIST_STATIONS: undefined,
+  LIST_STATIONS_SUCCESS: undefined,
+  LIST_STATIONS_ERROR: undefined,
+  REVERSE_STATION_ORDER: undefined,
+
+  LIST_TRAINS: undefined,
+  LIST_TRAINS_SUCCESS: undefined,
+  LIST_TRAINS_ERROR: undefined,
+});

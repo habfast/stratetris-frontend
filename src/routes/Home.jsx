@@ -3,13 +3,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import config from 'config';
-import { login } from 'actions/index';
+import { reverseStationOrder, selectStation } from 'actions/index';
 
 import { Button, Container, Text, utils } from 'styled-minimal';
-import Background from 'components/Background';
-import Icon from 'components/Icon';
-import Logo from 'components/Logo';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Grid from '@material-ui/core/Grid';
+
+import { filter } from 'lodash';
+
+import Projection from 'components/Projection'
 
 const { spacer } = utils;
 
@@ -31,7 +35,7 @@ const Header = styled.div`
 `;
 
 const Heading = styled.h1`
-  color: #fff;
+  color: #000;
   font-size: 3.5rem;
   line-height: 1.4;
   margin-bottom: ${spacer(3)};
@@ -50,44 +54,82 @@ const Heading = styled.h1`
 export class Home extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    user: PropTypes.object.isRequired,
+    availableStations: PropTypes.array.isRequired,
+    selectedStations: PropTypes.object.isRequired,
   };
 
-  handleClickLogin = () => {
+  handleToggleStation = (evt, selected) => {
     const { dispatch } = this.props;
+    dispatch(selectStation(evt.target.value, selected));
+  };
 
-    dispatch(login());
+  handleReverseStationOrder = (evt) => {
+    const { dispatch } = this.props;
+    dispatch(reverseStationOrder());
   };
 
   render() {
-    const { user } = this.props;
-
+    
     return (
-      <Background key="Home" data-testid="HomeWrapper">
-        <HomeContainer verticalPadding>
-          <Header>
-            <Logo />
-          </Header>
-          <Heading>{config.description}</Heading>
-          <Button
-            animate={user.status === 'running'}
-            onClick={this.handleClickLogin}
-            size="xl"
-            textTransform="uppercase"
-            data-testid="Login"
-          >
-            <Icon name="sign-in" />
-            <Text ml={2}>Start</Text>
-          </Button>
-        </HomeContainer>
-      </Background>
+      <HomeContainer verticalPadding>
+        <Heading>Stratetris</Heading>
+        {
+          this.props.fetchingTrains ?
+          (
+            <Button
+              animate={this.props.fetchingTrains}
+              size="xl"
+              textTransform="uppercase"
+              data-testid="Login"
+            >
+              <Text ml={2}>Running traffic allocator</Text>
+            </Button>
+          )
+          : 
+          (
+            <Grid container>
+              <Grid item xs={12} md={1}>
+                <FormGroup>
+                  {
+                    this.props.availableStations.map((name) => (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={this.props.selectedStations[name]}
+                            onChange={this.handleToggleStation}
+                            value={name}
+                          />
+                        }
+                        key={name}
+                        label={name}
+                      />
+                    ))
+                  }
+                </FormGroup>
+                <Button variant="primary" color="primary" onClick={this.handleReverseStationOrder}>
+                  Reverse order
+                </Button>
+
+              </Grid>
+              <Grid item xs={12} md={11}>
+                <Projection legs={this.props.legs} stations={filter(this.props.availableStations, (station) => this.props.selectedStations[station])} />
+              </Grid>
+            </Grid>
+          )
+        }
+      </HomeContainer>
     );
   }
 }
 
 /* istanbul ignore next */
 function mapStateToProps(state) {
-  return { user: state.user };
+  return { 
+    availableStations: state.projection.availableStations,
+    selectedStations: state.projection.selectedStations,
+    legs: state.projection.legs,
+    fetchingTrains: state.projection.fetchingTrains,
+  };
 }
 
 export default connect(mapStateToProps)(Home);

@@ -12,7 +12,6 @@ const GlobalStyle = createGlobalStyle`
   }
 
   html {
-    font-size: 62.5%;
     -webkit-font-smoothing: antialiased;
     height: 100%;
   }
