@@ -69,7 +69,7 @@ export class Projection extends React.PureComponent {
     
     render() {
         const width = 1440;
-        const height = 600;
+        const height = 700;
         const padding = 50;
         const totalWidth = width + 2*padding;
         const totalHeight = height + 2*padding;
@@ -121,6 +121,7 @@ export class Projection extends React.PureComponent {
                             x2={stopCoord(leg.endTime)} 
                             onMouseEnter={() => this.setState({...this.state, legTooltip: leg})}
                             onMouseLeave={() => this.setState({...this.state, legTooltip: undefined})}
+                            onClick={() => this.props.onClickLeg(leg)}
                             stroke={this.occupancyColor(leg.occupancy)} 
                             strokeWidth={this.capacityWidth(leg.capacity)}>
                         </line>
@@ -163,6 +164,7 @@ export class Projection extends React.PureComponent {
 Projection.propTypes = {
   legs: PropTypes.array.isRequired,
   stations: PropTypes.array.isRequired,
+  onClickLeg: PropTypes.func,
 };
 
 export default withStyles(styles)(Projection);

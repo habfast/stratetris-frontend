@@ -45,6 +45,7 @@ function computeLegs(state) {
       }
       allLegs.push({
         train: train.number,
+        trainInitialDeparture: train.schedule[`${train.itinerary[0]}-dep`],
         startTime: (train.schedule[`${startStation}-arr`] + train.schedule[`${startStation}-dep`]) / 2,
         endTime: (train.schedule[`${endStation}-arr`] + train.schedule[`${endStation}-dep`]) / 2,
         startStation,
@@ -59,6 +60,7 @@ function computeLegs(state) {
 }
 
 export const projectionState = {
+  pendingModifications: {},
   selectedStations: {},
   availableStations: [],
   legs: [],
@@ -84,6 +86,11 @@ export default {
           legs: { $set: computeLegs(cloned) },
         })
       },
+      [ActionTypes.CHANGE_TRAIN_DEPARTURE_TIME]: (state) => {
+        return immutable(state, {
+          fetchingTrains: { $set: true },
+        })
+      },
       [ActionTypes.LIST_STATIONS_SUCCESS]: (state, { payload }) => {
         return immutable(state, {
           availableStations: { $set: payload.data },
@@ -96,9 +103,12 @@ export default {
         })
       },
       [ActionTypes.LIST_TRAINS_SUCCESS]: (state, { payload }) => {
+        let cloned = clone(state);
+        cloned.trains = payload.data;
         return immutable(state, {
           trains: { $set: payload.data },
           fetchingTrains: { $set: false },
+          legs: { $set: computeLegs(cloned) },
         })
       },
       [ActionTypes.LIST_TRAINS_ERROR]: (state, { payload }) => {

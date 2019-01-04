@@ -21,6 +21,7 @@ export const ActionTypes = keyMirror({
   LIST_STATIONS_ERROR: undefined,
   REVERSE_STATION_ORDER: undefined,
 
+  CHANGE_TRAIN_DEPARTURE_TIME: undefined,
   LIST_TRAINS: undefined,
   LIST_TRAINS_SUCCESS: undefined,
   LIST_TRAINS_ERROR: undefined,
